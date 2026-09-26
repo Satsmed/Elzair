@@ -1,0 +1,98 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Collections | ELZAIR by Sherin</title><link rel="stylesheet" href="style.css"></head><body><div class="top">Jewelry • Accessories • Elegance</div><nav><div class="wrap navin"><a href="index.html"><img class="logo" src="assets/elzair-logo.jpg" alt="ELZAIR"></a><div class="links"><a href="index.html#shop">Shop</a><a href="collections.html">Collections</a><a href="index.html#story">Our Story</a><a href="index.html#instagram">Instagram</a></div><a class="navorder" href="index.html#order">Order</a></div></nav><section><div class="wrap"><div class="head"><div class="kicker">ELZAIR by Sherin</div><h2>The ELZAIR Collections</h2><p>Explore necklaces, earrings, bracelets and statement pieces. The real catalogue will be added here.</p><div class="actions" style="justify-content:center"><a class="btn gold" data-cta="whatsapp" href="https://wa.me/971501503320" target="_blank">WhatsApp ELZAIR</a><a class="btn" href="index.html">Back to Home</a></div></div></div></section><footer><div class="wrap foot"><img src="assets/elzair-logo.jpg" alt="ELZAIR"><p>© 2026 ELZAIR by Sherin</p></div></footer>
+<script>
+(function(){
+  const $ = (s,root=document)=>root.querySelector(s);
+  const $$ = (s,root=document)=>[...root.querySelectorAll(s)];
+
+  // Scroll reveal
+  const revealTargets = $$('section .wrap > *, section .wrap > .head, .cat, .product, .editorialimg, .storyimg, .qr, footer .wrap');
+  revealTargets.forEach((el,i)=>{
+    el.classList.add('reveal');
+    if(i%5===1) el.classList.add('delay-1');
+    if(i%5===2) el.classList.add('delay-2');
+    if(i%5===3) el.classList.add('delay-3');
+  });
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('revealed');io.unobserve(e.target)}});
+  },{threshold:.12,rootMargin:'0px 0px -50px'});
+  $$('.reveal,.reveal-left,.reveal-right').forEach(el=>io.observe(el));
+
+  // Sticky navigation shadow
+  const nav = $('nav');
+  if(nav) window.addEventListener('scroll',()=>nav.classList.toggle('nav-scrolled',window.scrollY>18),{passive:true});
+
+  // Smooth in-page links
+  $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+    const id=a.getAttribute('href');
+    if(id && id!=='#' && $(id)){e.preventDefault();$(id).scrollIntoView({behavior:'smooth',block:'start'});}
+  }));
+
+  // Button ripple + toast
+  function toast(message){
+    let t=$('.toast');
+    if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t);}
+    t.textContent=message;t.classList.add('show');
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer=setTimeout(()=>t.classList.remove('show'),1900);
+  }
+  window.elzairToast=toast;
+
+  $$('button,.btn,.navorder,.add,.cart').forEach(btn=>{
+    btn.addEventListener('click',e=>{
+      const r=document.createElement('span'), rect=btn.getBoundingClientRect();
+      r.className='ripple';r.style.width=r.style.height=Math.max(rect.width,rect.height)+'px';
+      r.style.left=(e.clientX-rect.left-Math.max(rect.width,rect.height)/2)+'px';
+      r.style.top=(e.clientY-rect.top-Math.max(rect.width,rect.height)/2)+'px';
+      btn.appendChild(r);setTimeout(()=>r.remove(),700);
+    });
+  });
+
+  // Subtle product tilt on pointer devices
+  $$('.product').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      if(window.matchMedia('(pointer:fine)').matches){
+        const r=card.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+        card.style.transform=`perspective(900px) rotateY(${x*4}deg) rotateX(${-y*4}deg) translateY(-4px)`;
+      }
+    });
+    card.addEventListener('mouseleave',()=>card.style.transform='');
+  });
+
+  $$('a[href*="wa.me"]').forEach(a=>a.addEventListener('click',()=>{if(window.elzairToast) elzairToast('Opening ELZAIR WhatsApp');}));
+
+  // Product image lightbox
+  const pics=$$('.product .pic');
+  if(pics.length){
+    const lb=document.createElement('div');
+    lb.className='lightbox';
+    lb.innerHTML='<div class="lightbox-card"><button class="lightbox-close" aria-label="Close">×</button><img alt="ELZAIR product preview"></div>';
+    document.body.appendChild(lb);
+    const img=$('img',lb);
+    pics.forEach(pic=>pic.addEventListener('click',()=>{
+      const bg=getComputedStyle(pic).backgroundImage;
+      const url=bg.match(/url\\(["']?(.*?)["']?\\)/)?.[1];
+      if(url){img.src=url;lb.classList.add('open');document.body.style.overflow='hidden';}
+    }));
+    const close=()=>{lb.classList.remove('open');document.body.style.overflow='';};
+    $('.lightbox-close',lb).addEventListener('click',close);
+    lb.addEventListener('click',e=>{if(e.target===lb)close()});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+  }
+
+  // Hero video soft parallax
+  const hero=$('.hero'), video=hero&&$('video',hero);
+  if(hero&&video){
+    window.addEventListener('scroll',()=>{
+      if(window.scrollY<hero.offsetHeight) video.style.transform=`translateY(${window.scrollY*.10}px) scale(1.03)`;
+    },{passive:true});
+  }
+
+  // Animate cart count when it changes
+  window.elzairCartBump=function(){
+    const c=$('#cartCount'); if(!c)return;
+    c.animate([{transform:'scale(1)'},{transform:'scale(1.35)'},{transform:'scale(1)'}],{duration:360,easing:'ease-out'});
+  };
+})();
+</script>
+
+</body></html>
